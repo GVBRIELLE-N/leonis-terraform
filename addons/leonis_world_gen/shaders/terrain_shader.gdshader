@@ -4,11 +4,11 @@ uniform float heightOffset = 2;
 uniform sampler2D heightMapTexture;
 
 void vertex() {
-	VERTEX.y += texture(heightMapTexture, UV).r * heightOffset * 2.0;
+	VERTEX.y += texture(heightMapTexture, UV).r * heightOffset * 4.0;
 }
 
 void fragment() {
-	ALBEDO = vec3(0, 1, 0);
+	ALBEDO = vec3(0.35, 0.5, 0) * texture(heightMapTexture, UV).rgb;
 }
 
 //void light() {

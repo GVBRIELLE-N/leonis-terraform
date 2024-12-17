@@ -16,6 +16,7 @@ func _ready():
 	generate_terrain_mesh()
 
 func generate_terrain_mesh():
+	print("Generating Terrain Cell at position: " + str(position))
 	if get_child_count() > 0:
 		for child in get_children():
 			child.free()
@@ -26,6 +27,7 @@ func generate_terrain_mesh():
 	add_child(terrain_lod_0)
 	add_child(terrain_lod_1)
 	add_child(terrain_lod_2)
+	print("Cell generated successfully")
 	
 	
 func configure_material():
@@ -47,7 +49,7 @@ func generate_lod_0():
 	terrain_lod_0 = MeshInstance3D.new()
 	terrain_lod_0.name = "TerrainCellLOD0"
 	
-	terrain_lod_0.visibility_range_end = CellSize
+	terrain_lod_0.visibility_range_end = CellSize + 128
 	terrain_lod_0.mesh = generate_mesh(16)
 
 func generate_lod_1():
@@ -57,7 +59,7 @@ func generate_lod_1():
 	terrain_lod_1 = MeshInstance3D.new()
 	terrain_lod_1.name = "TerrainCellLOD1"
 
-	terrain_lod_1.visibility_range_begin = CellSize
+	terrain_lod_1.visibility_range_begin = CellSize + 128
 	terrain_lod_1.visibility_range_end = CellSize * 2
 	terrain_lod_1.mesh = generate_mesh(subd)
 	
