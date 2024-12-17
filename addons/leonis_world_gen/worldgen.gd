@@ -29,8 +29,8 @@ func _enter_tree():
 	terraingen_pop.connect("id_pressed", _on_terrain_option_pressed)
 	
 #	Create custom nodes
-	add_custom_type("TerrainGenerationNode", "Node3D", preload("res://addons/leonis_world_gen/scripts/terrain_generator.gd"), null)
-	add_custom_type("HeightMapGenerationNode", "Node3D", preload("res://addons/leonis_world_gen/subtools/heightgen.gd"), null)
+	add_custom_type("LeonisTerrain3D", "Node3D", preload("res://addons/leonis_world_gen/scripts/terrain_generator.gd"), null)
+	add_custom_type("LeonisHeightMap3D", "Node3D", preload("res://addons/leonis_world_gen/subtools/heightgen.gd"), null)
 	
 # Handle pressing a popup option
 # Terrain Menu
