@@ -42,12 +42,23 @@ func _on_heightmap_option_pressed(id : int):
 	pass
 	
 func _edit(object : Object):
+	
 	if object is EditorTerrainNode:
+#		Ensure the other control is removed
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
 		obj = object
 		if terraingen_menu_controls.get_parent():
 			terraingen_menu_controls.get_parent().remove_child(terraingen_menu_controls)
 		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+	elif object is EditorHeightGenNode:
+	#		Ensure the other control is removed
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+		obj = object
+		if heightgen_menu_controls.get_parent():
+			heightgen_menu_controls.get_parent().remove_child(heightgen_menu_controls)
+		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
 	else:
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
 		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
 
 func _handles(object):
