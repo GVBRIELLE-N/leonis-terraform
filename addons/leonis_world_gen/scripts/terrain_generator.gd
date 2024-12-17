@@ -2,9 +2,9 @@
 class_name EditorTerrainNode extends Node3D
 
 @export var HeightMapTexture : Texture2D
-@export var HeightOffset : float = 5
-@export_range(512, 1024, 128) var CellSize : int = 128
-@export_range(1,6) var subdivisionSteps : int = 1
+@export var HeightOffset : float = 10
+@export_range(512, 1024, 128) var CellSize : int = 1024
+@export_range(1,6) var subdivisionSteps : int = 6
 
 var terrain_lod_0 : MeshInstance3D
 var terrain_lod_1 : MeshInstance3D
@@ -35,7 +35,6 @@ func configure_material():
 	terrain_material.shader = preload("res://addons/leonis_world_gen/shaders/terrain_shader.gdshader")
 	terrain_material.set_shader_parameter("heightMapTexture", HeightMapTexture)
 	terrain_material.set_shader_parameter("heightOffset", HeightOffset)
-	terrain_material.set_shader_parameter("uvOffset", Vector2(global_position.x / CellSize, global_position.z / CellSize))
 	
 func generate_mesh(subdivision : int) -> PlaneMesh:
 		var mesh = PlaneMesh.new()
