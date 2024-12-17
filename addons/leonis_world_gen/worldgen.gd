@@ -35,27 +35,34 @@ func _enter_tree():
 # Handle pressing a popup option
 # Terrain Menu
 func _on_terrain_option_pressed(id : int):
-	print(id)
+	match id:
+		1:
+			if obj and obj.has_method("generate_terrain_mesh"):
+				obj.call("generate_terrain_mesh")
 
 #HeightMap Menu
 func _on_heightmap_option_pressed(id : int):
 	pass
 	
+func remove_control(control):
+	if control and control.get_parent():
+		control.get_parent().remove_child(control)
+
 func _edit(object : Object):
 	
 	if object is EditorTerrainNode:
 #		Ensure the other control is removed
+		remove_control(terraingen_menu_controls)
 		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
-		obj = object
-		if terraingen_menu_controls.get_parent():
-			terraingen_menu_controls.get_parent().remove_child(terraingen_menu_controls)
+		
+		obj = object                         
 		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
 	elif object is EditorHeightGenNode:
 	#		Ensure the other control is removed
+		remove_control(heightgen_menu_controls)
 		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+		
 		obj = object
-		if heightgen_menu_controls.get_parent():
-			heightgen_menu_controls.get_parent().remove_child(heightgen_menu_controls)
 		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
 	else:
 		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
@@ -65,5 +72,10 @@ func _handles(object):
 	return object is EditorTerrainNode || object is EditorHeightGenNode
 
 func _exit_tree():
-	terraingen_menu_controls.get_parent().remove_child(terraingen_menu_controls)
-	remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+	if terraingen_menu_controls.get_parent():
+		remove_control(terraingen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+	
+	if heightgen_menu_controls.get_parent():
+		remove_control(heightgen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
