@@ -39,6 +39,12 @@ func _on_terrain_option_pressed(id : int):
 		1:
 			if obj and obj.has_method("generate_terrain_mesh"):
 				obj.call("generate_terrain_mesh")
+		2:
+			if obj and obj.has_method("scatter_objects"):
+				obj.call("scatter_objects")
+		3:
+			if obj and obj.has_method("generate_collider"):
+				obj.call("generate_collider")
 
 #HeightMap Menu
 func _on_heightmap_option_pressed(id : int):

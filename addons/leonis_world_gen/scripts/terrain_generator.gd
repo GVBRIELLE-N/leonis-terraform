@@ -43,6 +43,21 @@ func configure_material():
 	terrain_material.shader = preload("res://addons/leonis_world_gen/shaders/terrain_shader.gdshader")
 	terrain_material.set_shader_parameter("heightMapTexture", HeightMapTexture)
 	terrain_material.set_shader_parameter("heightOffset", HeightOffset)
+#	Top Layer
+	terrain_material.set_shader_parameter("topColour", topLayer.albedo)
+	terrain_material.set_shader_parameter("topTexture", topLayer.albedoTexture)
+	terrain_material.set_shader_parameter("topNormalMap", topLayer.normalMap)
+	terrain_material.set_shader_parameter("topTiling", topLayer.uvTiling)
+#	MiddleLayer
+	terrain_material.set_shader_parameter("middleColour", middleLayer.albedo)
+	terrain_material.set_shader_parameter("middleTexture", middleLayer.albedoTexture)
+	terrain_material.set_shader_parameter("middleNormalMap", middleLayer.normalMap)
+	terrain_material.set_shader_parameter("middleTiling", middleLayer.uvTiling)
+#	BottomLayer
+	terrain_material.set_shader_parameter("bottomColour", bottomLayer.albedo)
+	terrain_material.set_shader_parameter("bottomTexture", bottomLayer.albedoTexture)
+	terrain_material.set_shader_parameter("bottomNormalMap", bottomLayer.normalMap)
+	terrain_material.set_shader_parameter("bottomTiling", bottomLayer.uvTiling)
 	
 func generate_mesh(subdivision : int) -> PlaneMesh:
 		var mesh = PlaneMesh.new()
@@ -58,12 +73,12 @@ func generate_lod_0():
 	terrain_lod_0.name = "TerrainCellLOD0"
 	
 	terrain_lod_0.visibility_range_end = CellSize + 128
-	terrain_lod_0.mesh = generate_mesh(16)
+	terrain_lod_0.mesh = generate_mesh(32)
 
 func generate_lod_1():
-	var subd = 8
+	var subd = 16
 	if subdivisionSteps > 4:
-		subd = 4
+		subd = 8
 	terrain_lod_1 = MeshInstance3D.new()
 	terrain_lod_1.name = "TerrainCellLOD1"
 
@@ -72,12 +87,18 @@ func generate_lod_1():
 	terrain_lod_1.mesh = generate_mesh(subd)
 	
 func generate_lod_2():
-	var subd = 4
+	var subd = 8
 	if subdivisionSteps > 4:
-		subd = 2
+		subd = 4
 	terrain_lod_2 = MeshInstance3D.new()
 	terrain_lod_2.name = "TerrainCellLOD2"
 	
 	terrain_lod_2.visibility_range_begin = CellSize * 2
 	terrain_lod_2.visibility_range_end = CellSize * 4
 	terrain_lod_2.mesh = generate_mesh(subd)
+
+func generate_collider():
+	print("TODO")
+
+func scatter_objects():
+	print("TODO")
