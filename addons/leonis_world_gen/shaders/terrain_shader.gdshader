@@ -23,10 +23,7 @@ uniform vec2 bottomTiling;
 
 varying vec2 main_uv;
 
-void vertex() {
-	
-	VERTEX.y += texture(heightMapTexture, UV).r * heightOffset;
-}
+
 
 void fragment() {
 	float tex_blend = 0.5;
