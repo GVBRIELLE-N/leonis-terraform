@@ -1,10 +1,18 @@
 @tool
 class_name EditorTerrainNode extends Node3D
 
+@export_category("Terrain Configuration")
 @export var HeightMapTexture : Texture2D
 @export var HeightOffset : float = 10
+
+@export_category("Cell Configuration")
 @export_range(512, 1024, 128) var CellSize : int = 1024
 @export_range(1,6) var subdivisionSteps : int = 6
+
+@export_category("Terrain Layers")
+@export var topLayer 	: TerrainLayer
+@export var middleLayer : TerrainLayer
+@export var bottomLayer : TerrainLayer
 
 var terrain_lod_0 : MeshInstance3D
 var terrain_lod_1 : MeshInstance3D
