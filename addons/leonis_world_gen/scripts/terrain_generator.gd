@@ -21,23 +21,32 @@ var terrain_lod_2 : MeshInstance3D
 var terrain_material : ShaderMaterial
 
 func _ready():
-	generate_terrain_mesh()
+	await get_tree().process_frame
+#	Only generate a mesh if the node has no children
+	if get_child_count() == 0:
+		generate_terrain_mesh()
 
 func generate_terrain_mesh():
-	print("Generating Terrain Cell at position: " + str(position))
 	if get_child_count() > 0:
 		for child in get_children():
 			child.free()
+	if HeightMapTexture == null:
+		push_warning("Unable to generate mesh without a heightmap texture.")
+		return
+	print("Generating Terrain Cell at position: " + str(position))
 	configure_material()
 	generate_lod_0()
-	#generate_lod_1()
-	#generate_lod_2()
+	generate_lod_1()
+	generate_lod_2()
 	terrain_lod_0.scale.y = HeightOffset/4
-	#terrain_lod_1.scale.y = HeightOffset/4
-	#terrain_lod_2.scale.y = HeightOffset/4
-	add_child(terrain_lod_0)
-	#add_child(terrain_lod_1)
-	#add_child(terrain_lod_2)
+	terrain_lod_1.scale.y = HeightOffset/4
+	terrain_lod_2.scale.y = HeightOffset/4
+#	Create a static body for the cell
+	var lod_0_root = StaticBody3D.new()
+	lod_0_root.add_child(terrain_lod_0)
+	add_child(lod_0_root)
+	add_child(terrain_lod_1)
+	add_child(terrain_lod_2)
 	print("Cell generated successfully")
 	
 	
@@ -77,20 +86,22 @@ func generate_lod_0():
 	
 	terrain_lod_0.visibility_range_end = CellSize + 128
 	terrain_lod_0.mesh = generate_lod_mesh(32)
+	terrain_lod_0.create_trimesh_collision()
 	terrain_lod_0.material_override = terrain_material
 
 func generate_lod_mesh(verts : int) -> ArrayMesh:
 	var arr_mesh : ArrayMesh = ArrayMesh.new()
 	var surf = SurfaceTool.new()
-	var i = HeightMapTexture.get_image()
-	i.resize(verts + 1, verts + 1, Image.INTERPOLATE_BILINEAR) # Ensure the heightmap matches the grid resolution.
+	var original_img = HeightMapTexture.get_image()
+	var image = original_img.duplicate()
+	image.resize(verts + 1, verts + 1, Image.INTERPOLATE_BILINEAR) # Ensure the heightmap matches the grid resolution.
 	
 	surf.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
 	# Add vertices and UVs
 	for z in range(verts + 1):
 		for x in range(verts + 1):
-			var y = i.get_pixel(x, z).r * HeightOffset * 4 # Scale height by 10 (adjust as needed)
+			var y = image.get_pixel(x, z).r * HeightOffset * 4 # Scale height by 10 (adjust as needed)
 			# UV mapping (normalized coordinates)
 			var uv = Vector2(float(x) / verts, float(z) / verts)
 			surf.set_uv(uv)
@@ -132,6 +143,7 @@ func generate_lod_1():
 	terrain_lod_1.visibility_range_begin = CellSize + 128
 	terrain_lod_1.visibility_range_end = CellSize * 2
 	terrain_lod_1.mesh = generate_lod_mesh(16)
+	terrain_lod_1.material_override = terrain_material
 	
 func generate_lod_2():
 	var subd = 4
@@ -143,6 +155,7 @@ func generate_lod_2():
 	terrain_lod_2.visibility_range_begin = CellSize * 2
 	terrain_lod_2.visibility_range_end = CellSize * 4
 	terrain_lod_2.mesh = generate_lod_mesh(8)
+	terrain_lod_2.material_override = terrain_material
 
 func generate_collider():
 	print("TODO")
