@@ -24,18 +24,31 @@ uniform vec2 bottomTiling;
 varying vec2 main_uv;
 
 void vertex() {
-	VERTEX.y += texture(heightMapTexture, UV).r * heightOffset * 4.0;
+	
+	VERTEX.y += texture(heightMapTexture, UV).r * heightOffset;
 }
 
 void fragment() {
-	float b_blend = clamp(texture(heightMapTexture, UV).r, 0.0, 1);
-	float t_blend = clamp(texture(heightMapTexture, UV).r, 0.0, 1);
-	vec3 bc_mix = mix(bottomColour, middleColour, b_blend).rgb;
-	vec3 tc_mix = mix(bc_mix, topColour.rgb, t_blend).rgb;
+	float tex_blend = 0.5;
+	float b_blend = clamp(texture(heightMapTexture, UV).r / tex_blend, 0.0, 1.0);
+	float t_blend = clamp(texture(heightMapTexture, UV).r / (heightOffset * tex_blend), 0.0, 1.0);
 	
-	vec3 bt_mix = mix(texture(bottomTexture, UV * bottomTiling), texture(middleTexture, UV * middleTiling), b_blend).rgb;
-	vec3 tt_mix = mix(bt_mix, texture(topTexture, UV * topTiling).rgb, t_blend).rgb;
-	ALBEDO = tc_mix * tt_mix;
+	vec3 c0 = mix(bottomColour, middleColour, b_blend).rgb;
+	vec3 c1 = mix(c0, topColour.rgb, t_blend).rgb;
+	
+	vec3 t0 = mix(texture(bottomTexture, UV * bottomTiling).rgb, texture(middleTexture, UV * middleTiling).rgb, b_blend);
+	vec3 t1 = mix(t0, texture(topTexture, UV * topTiling).rgb, t_blend);
+	
+	vec3 n0 = mix(texture(bottomNormalMap, UV * bottomTiling).rgb, texture(middleNormalMap, UV * middleTiling).rgb, b_blend);
+	vec3 n1 = mix(n0, texture(topNormalMap, UV * topTiling).rgb, t_blend);
+		
+	vec3 tc_mix = c1;
+	
+	vec3 tt_mix = t1;
+	ALBEDO = tt_mix * tc_mix;
+	NORMAL_MAP = n1;
+	ROUGHNESS = 1.0;
+	METALLIC = 1.0;
 }
 
 //void light() {

@@ -32,6 +32,9 @@ func generate_terrain_mesh():
 	generate_lod_0()
 	generate_lod_1()
 	generate_lod_2()
+	terrain_lod_0.scale.y = HeightOffset/4
+	terrain_lod_1.scale.y = HeightOffset/4
+	terrain_lod_2.scale.y = HeightOffset/4
 	add_child(terrain_lod_0)
 	add_child(terrain_lod_1)
 	add_child(terrain_lod_2)
@@ -73,12 +76,12 @@ func generate_lod_0():
 	terrain_lod_0.name = "TerrainCellLOD0"
 	
 	terrain_lod_0.visibility_range_end = CellSize + 128
-	terrain_lod_0.mesh = generate_mesh(32)
+	terrain_lod_0.mesh = generate_mesh(16)
 
 func generate_lod_1():
-	var subd = 16
+	var subd = 8
 	if subdivisionSteps > 4:
-		subd = 8
+		subd = 4
 	terrain_lod_1 = MeshInstance3D.new()
 	terrain_lod_1.name = "TerrainCellLOD1"
 
@@ -87,9 +90,9 @@ func generate_lod_1():
 	terrain_lod_1.mesh = generate_mesh(subd)
 	
 func generate_lod_2():
-	var subd = 8
+	var subd = 4
 	if subdivisionSteps > 4:
-		subd = 4
+		subd = 2
 	terrain_lod_2 = MeshInstance3D.new()
 	terrain_lod_2.name = "TerrainCellLOD2"
 	
