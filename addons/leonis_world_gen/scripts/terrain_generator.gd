@@ -5,14 +5,17 @@ class_name EditorTerrainNode extends Node3D
 @export var HeightMapTexture : Texture2D
 @export var HeightOffset : float = 10
 
+@export_group("Collision")
+@export var EnableCollision : bool = true
+
 @export_category("Cell Configuration")
 @export_range(512, 1024, 128) var CellSize : int = 1024
 @export_range(1,6) var subdivisionSteps : int = 6
 
 @export_category("Terrain Layers")
-@export var topLayer 	: TerrainLayer
-@export var middleLayer : TerrainLayer
-@export var bottomLayer : TerrainLayer
+@export var rockLayer 	: TerrainLayer
+@export var groundLayer : TerrainLayer
+@export var detailLayer : TerrainLayer
 
 var terrain_lod_0 : MeshInstance3D
 var terrain_lod_1 : MeshInstance3D
@@ -69,20 +72,20 @@ func configure_material():
 	terrain_material.set_shader_parameter("heightMapTexture", HeightMapTexture)
 	terrain_material.set_shader_parameter("heightOffset", HeightOffset)
 #	Top Layer
-	terrain_material.set_shader_parameter("topColour", topLayer.albedo)
-	terrain_material.set_shader_parameter("topTexture", topLayer.albedoTexture)
-	terrain_material.set_shader_parameter("topNormalMap", topLayer.normalMap)
-	terrain_material.set_shader_parameter("topTiling", topLayer.uvTiling)
-#	MiddleLayer
-	terrain_material.set_shader_parameter("middleColour", middleLayer.albedo)
-	terrain_material.set_shader_parameter("middleTexture", middleLayer.albedoTexture)
-	terrain_material.set_shader_parameter("middleNormalMap", middleLayer.normalMap)
-	terrain_material.set_shader_parameter("middleTiling", middleLayer.uvTiling)
-#	BottomLayer
-	terrain_material.set_shader_parameter("bottomColour", bottomLayer.albedo)
-	terrain_material.set_shader_parameter("bottomTexture", bottomLayer.albedoTexture)
-	terrain_material.set_shader_parameter("bottomNormalMap", bottomLayer.normalMap)
-	terrain_material.set_shader_parameter("bottomTiling", bottomLayer.uvTiling)
+	terrain_material.set_shader_parameter("rockColour", rockLayer.albedo)
+	terrain_material.set_shader_parameter("rockTexture", rockLayer.albedoTexture)
+	terrain_material.set_shader_parameter("rockNormalMap", rockLayer.normalMap)
+	terrain_material.set_shader_parameter("rockTiling", rockLayer.uvTiling)
+#	groundLayer
+	terrain_material.set_shader_parameter("groundColour", groundLayer.albedo)
+	terrain_material.set_shader_parameter("groundTexture", groundLayer.albedoTexture)
+	terrain_material.set_shader_parameter("groundNormalMap", groundLayer.normalMap)
+	terrain_material.set_shader_parameter("groundTiling", groundLayer.uvTiling)
+#	detailLayer
+	terrain_material.set_shader_parameter("detailColour", detailLayer.albedo)
+	terrain_material.set_shader_parameter("detailTexture", detailLayer.albedoTexture)
+	terrain_material.set_shader_parameter("detailNormalMap", detailLayer.normalMap)
+	terrain_material.set_shader_parameter("detailTiling", detailLayer.uvTiling)
 	
 func generate_mesh(subdivision : int) -> PlaneMesh:
 		var mesh = PlaneMesh.new()
@@ -99,7 +102,8 @@ func generate_lod_0():
 	
 	terrain_lod_0.visibility_range_end = CellSize/2 + 128
 	terrain_lod_0.mesh = generate_lod_mesh(64)
-	terrain_lod_0.create_trimesh_collision()
+	if EnableCollision:
+		terrain_lod_0.create_trimesh_collision()
 	terrain_lod_0.material_override = terrain_material
 
 func generate_lod_mesh(verts : int) -> ArrayMesh:

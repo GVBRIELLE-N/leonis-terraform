@@ -4,22 +4,22 @@ uniform float heightOffset = 2;
 uniform sampler2D heightMapTexture;
 
 //Top Layer
-uniform vec4 topColour : source_color = vec4(1,0,0,1);
-uniform sampler2D topTexture;
-uniform sampler2D topNormalMap;
-uniform vec2 topTiling;
+uniform vec4 rockColour : source_color = vec4(1,0,0,1);
+uniform sampler2D rockTexture;
+uniform sampler2D rockNormalMap;
+uniform vec2 rockTiling;
 
 //Middle Layer
-uniform vec4 middleColour : source_color = vec4(0, 1, 0, 1);
-uniform sampler2D middleTexture;
-uniform sampler2D middleNormalMap;
-uniform vec2 middleTiling;
+uniform vec4 groundColour : source_color = vec4(0, 1, 0, 1);
+uniform sampler2D groundTexture;
+uniform sampler2D groundNormalMap;
+uniform vec2 groundTiling;
 
 //Bottom Layer
-uniform vec4 bottomColour : source_color = vec4(0, 0, 1, 1);
-uniform sampler2D bottomTexture;
-uniform sampler2D bottomNormalMap;
-uniform vec2 bottomTiling;
+uniform vec4 detailColour : source_color = vec4(0, 0, 1, 1);
+uniform sampler2D detailTexture;
+uniform sampler2D detailNormalMap;
+uniform vec2 detailTiling;
 
 varying vec2 main_uv;
 
@@ -30,14 +30,14 @@ void fragment() {
 	float b_blend = clamp(texture(heightMapTexture, UV).r / tex_blend, 0.0, 1.0);
 	float t_blend = clamp(texture(heightMapTexture, UV).r / (heightOffset * tex_blend), 0.0, 1.0);
 	
-	vec3 c0 = mix(bottomColour, middleColour, b_blend).rgb;
-	vec3 c1 = mix(c0, topColour.rgb, t_blend).rgb;
+	vec3 c0 = mix(detailColour, groundColour, b_blend).rgb;
+	vec3 c1 = mix(c0, rockColour.rgb, t_blend).rgb;
 	
-	vec3 t0 = mix(texture(bottomTexture, UV * bottomTiling).rgb, texture(middleTexture, UV * middleTiling).rgb, b_blend);
-	vec3 t1 = mix(t0, texture(topTexture, UV * topTiling).rgb, t_blend);
+	vec3 t0 = mix(texture(detailTexture, UV * detailTiling).rgb, texture(groundTexture, UV * groundTiling).rgb, b_blend);
+	vec3 t1 = mix(texture(groundTexture, UV * groundTiling * 100.0).rgb, texture(rockTexture, UV * rockTiling).rgb, b_blend);
 	
-	vec3 n0 = mix(texture(bottomNormalMap, UV * bottomTiling).rgb, texture(middleNormalMap, UV * middleTiling).rgb, b_blend);
-	vec3 n1 = mix(n0, texture(topNormalMap, UV * topTiling).rgb, t_blend);
+	vec3 n0 = mix(texture(detailNormalMap, UV * detailTiling).rgb, texture(groundNormalMap, UV * groundTiling).rgb, b_blend);
+	vec3 n1 = mix(texture(groundNormalMap, UV * groundTiling * 100.0).rgb, texture(rockNormalMap, UV * rockTiling).rgb, b_blend);
 		
 	vec3 tc_mix = c1;
 	
