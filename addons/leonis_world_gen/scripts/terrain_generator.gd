@@ -17,6 +17,7 @@ class_name EditorTerrainNode extends Node3D
 var terrain_lod_0 : MeshInstance3D
 var terrain_lod_1 : MeshInstance3D
 var terrain_lod_2 : MeshInstance3D
+var terrain_lod_3 : MeshInstance3D
 
 var terrain_material : ShaderMaterial
 
@@ -33,22 +34,34 @@ func generate_terrain_mesh():
 	if HeightMapTexture == null:
 		push_warning("Unable to generate mesh without a heightmap texture.")
 		return
-	print("Generating Terrain Cell at position: " + str(position))
 	configure_material()
 	generate_lod_0()
 	generate_lod_1()
 	generate_lod_2()
+	generate_lod_3()
 	terrain_lod_0.scale.y = HeightOffset/4
 	terrain_lod_1.scale.y = HeightOffset/4
 	terrain_lod_2.scale.y = HeightOffset/4
+	terrain_lod_3.scale.y = HeightOffset/4
 #	Create a static body for the cell
+	add_children_and_reposition()
+	
+	
+func add_children_and_reposition():
 	var lod_0_root = StaticBody3D.new()
 	lod_0_root.add_child(terrain_lod_0)
+	lod_0_root.position.x = -(CellSize / 2)
+	lod_0_root.position.z = -(CellSize / 2)
 	add_child(lod_0_root)
+	terrain_lod_1.position.x = -(CellSize / 2)
+	terrain_lod_1.position.z = -(CellSize / 2)
 	add_child(terrain_lod_1)
+	terrain_lod_2.position.x = -(CellSize / 2)
+	terrain_lod_2.position.z = -(CellSize / 2)
 	add_child(terrain_lod_2)
-	print("Cell generated successfully")
-	
+	terrain_lod_3.position.x = -(CellSize / 2)
+	terrain_lod_3.position.z = -(CellSize / 2)
+	add_child(terrain_lod_3)
 	
 func configure_material():
 	terrain_material = ShaderMaterial.new()
@@ -84,8 +97,8 @@ func generate_lod_0():
 	terrain_lod_0 = MeshInstance3D.new()
 	terrain_lod_0.name = "TerrainCellLOD0"
 	
-	terrain_lod_0.visibility_range_end = CellSize + 128
-	terrain_lod_0.mesh = generate_lod_mesh(32)
+	terrain_lod_0.visibility_range_end = CellSize/2 + 128
+	terrain_lod_0.mesh = generate_lod_mesh(64)
 	terrain_lod_0.create_trimesh_collision()
 	terrain_lod_0.material_override = terrain_material
 
@@ -94,69 +107,57 @@ func generate_lod_mesh(verts : int) -> ArrayMesh:
 	var surf = SurfaceTool.new()
 	var original_img = HeightMapTexture.get_image()
 	var image = original_img.duplicate()
-	image.resize(verts + 1, verts + 1, Image.INTERPOLATE_BILINEAR) # Ensure the heightmap matches the grid resolution.
-	
+	image.resize(verts + 1, verts + 1, Image.INTERPOLATE_BILINEAR)
 	surf.begin(Mesh.PRIMITIVE_TRIANGLES)
-	
-	# Add vertices and UVs
 	for z in range(verts + 1):
 		for x in range(verts + 1):
-			var y = image.get_pixel(x, z).r * HeightOffset * 4 # Scale height by 10 (adjust as needed)
-			# UV mapping (normalized coordinates)
+			var y = image.get_pixel(x, z).r * HeightOffset * 4
 			var uv = Vector2(float(x) / verts, float(z) / verts)
 			surf.set_uv(uv)
-			surf.add_vertex(Vector3(x * (CellSize / verts), y, z * (CellSize / verts))) # Scale x and z by 10 (adjust as needed)
+			surf.add_vertex(Vector3(x * (CellSize / verts), y, z * (CellSize / verts)))
 	
-	# Generate indices for the grid
-	for z in range(verts): # Loop over quads
+	for z in range(verts):
 		for x in range(verts):
 			var top_left = z * (verts+1) + x
 			var top_right = top_left + 1
 			var bottom_left = (z + 1) * (verts+1) + x
 			var bottom_right = bottom_left + 1
-			
-			# First triangle
 			surf.add_index(top_left)
 			surf.add_index(top_right)
 			surf.add_index(bottom_left)
-			
-			
-			# Second triangle
 			surf.add_index(top_right)
 			surf.add_index(bottom_right)
 			surf.add_index(bottom_left)
-			
-	
-	# Generate normals and commit mesh
 	surf.generate_normals()
 	arr_mesh = surf.commit()
 	return arr_mesh
 
 
 func generate_lod_1():
-	var subd = 8
-	if subdivisionSteps > 4:
-		subd = 4
 	terrain_lod_1 = MeshInstance3D.new()
 	terrain_lod_1.name = "TerrainCellLOD1"
-
-	terrain_lod_1.visibility_range_begin = CellSize + 128
+	terrain_lod_1.visibility_range_begin = CellSize/2 + 128
 	terrain_lod_1.visibility_range_end = CellSize * 2
-	terrain_lod_1.mesh = generate_lod_mesh(16)
+	terrain_lod_1.mesh = generate_lod_mesh(32)
 	terrain_lod_1.material_override = terrain_material
 	
 func generate_lod_2():
-	var subd = 4
-	if subdivisionSteps > 4:
-		subd = 2
 	terrain_lod_2 = MeshInstance3D.new()
 	terrain_lod_2.name = "TerrainCellLOD2"
-	
 	terrain_lod_2.visibility_range_begin = CellSize * 2
-	terrain_lod_2.visibility_range_end = CellSize * 4
-	terrain_lod_2.mesh = generate_lod_mesh(8)
+	terrain_lod_2.visibility_range_end = CellSize * 3
+	terrain_lod_2.mesh = generate_lod_mesh(16)
 	terrain_lod_2.material_override = terrain_material
 
+func generate_lod_3():
+	terrain_lod_3 = MeshInstance3D.new()
+	terrain_lod_3.name = "TerrainCellLOD3"
+	terrain_lod_3.visibility_range_begin = CellSize * 3
+	terrain_lod_3.visibility_range_end = CellSize * 6
+	terrain_lod_3.mesh = generate_lod_mesh(8)
+	terrain_lod_3.material_override = terrain_material
+	
+	
 func generate_collider():
 	print("TODO")
 
