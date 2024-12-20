@@ -99,7 +99,7 @@ func generate_lod_0():
 	terrain_lod_0.name = "TerrainCellLOD0"
 	
 	terrain_lod_0.visibility_range_end = CellSize/2 + 128
-	terrain_lod_0.mesh = generate_lod_mesh(64)
+	terrain_lod_0.mesh = generate_lod_mesh(128)
 	if EnableCollision:
 		terrain_lod_0.create_trimesh_collision()
 	terrain_lod_0.material_override = terrain_material
