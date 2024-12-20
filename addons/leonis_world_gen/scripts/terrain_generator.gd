@@ -49,7 +49,6 @@ func generate_terrain_mesh():
 #	Create a static body for the cell
 	add_children_and_reposition()
 	
-	
 func add_children_and_reposition():
 	var lod_0_root = StaticBody3D.new()
 	lod_0_root.add_child(terrain_lod_0)
@@ -93,7 +92,6 @@ func generate_mesh(subdivision : int) -> PlaneMesh:
 		mesh.subdivide_depth = subdivisionSteps * subdivision
 		mesh.subdivide_width = subdivisionSteps * subdivision
 		mesh.material = terrain_material
-		
 		return mesh
 
 func generate_lod_0():
