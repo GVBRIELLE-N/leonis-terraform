@@ -131,6 +131,7 @@ func _generate_lod_0():
 	
 	_terrain_lod_0.visibility_range_end = cell_size/2 + 128
 	_terrain_lod_0.mesh = _generate_lod_mesh(128)
+	_terrain_lod_0.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_DOUBLE_SIDED
 	if enable_collision:
 		_terrain_lod_0.create_trimesh_collision()
 	_terrain_lod_0.material_override = _terrain_material
