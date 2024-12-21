@@ -1,32 +1,32 @@
 @tool
 extends EditorPlugin
 
-var heightgen_menu_controls
-var terraingen_menu_controls
-var obj
+var _heightgen_menu_controls
+var _terraingen_menu_controls
+var _obj
 
 func _enter_tree():
 #	Controls and options for HeightmapGen
-	heightgen_menu_controls = MenuButton.new()
-	heightgen_menu_controls.text = "Heightmap Generator"
+	_heightgen_menu_controls = MenuButton.new()
+	_heightgen_menu_controls.text = "Heightmap Generator"
 	
-	var heightgen_pop = heightgen_menu_controls.get_popup()
-	heightgen_pop.add_item("Create Preview", 1)
-	heightgen_pop.add_item("Remove Preview", 2)
-	heightgen_pop.add_item("Export Heightmap", 3)
+	var _heightgen_pop = _heightgen_menu_controls.get_popup()
+	_heightgen_pop.add_item("Create Preview", 1)
+	_heightgen_pop.add_item("Remove Preview", 2)
+	_heightgen_pop.add_item("Export Heightmap", 3)
 	
-	heightgen_pop.connect("id_pressed", _on_heightmap_option_pressed)
+	_heightgen_pop.connect("id_pressed", _on_heightmap_option_pressed)
 	
 #	Controls and options for Terrain Gen
-	terraingen_menu_controls = MenuButton.new()
-	terraingen_menu_controls.text = "Terrain Generator"
+	_terraingen_menu_controls = MenuButton.new()
+	_terraingen_menu_controls.text = "Terrain Generator"
 	
-	var terraingen_pop = terraingen_menu_controls.get_popup()
-	terraingen_pop.add_item("Create Terrain Cell", 1)
-	terraingen_pop.add_item("Scatter Objects", 2)
-	terraingen_pop.add_item("Set Collision Shape", 3)
+	var _terraingen_pop = _terraingen_menu_controls.get_popup()
+	_terraingen_pop.add_item("Create Terrain Cell", 1)
+	_terraingen_pop.add_item("Scatter Objects", 2)
+	_terraingen_pop.add_item("Set Collision Shape", 3)
 	
-	terraingen_pop.connect("id_pressed", _on_terrain_option_pressed)
+	_terraingen_pop.connect("id_pressed", _on_terrain_option_pressed)
 	
 #	Create custom nodes
 	add_custom_type("LeonisTerrain3D", "Node3D", preload("res://addons/leonis_world_gen/scripts/terrain_generator.gd"), null)
@@ -37,14 +37,14 @@ func _enter_tree():
 func _on_terrain_option_pressed(id : int):
 	match id:
 		1:
-			if obj and obj.has_method("generate_terrain_mesh"):
-				obj.call("generate_terrain_mesh")
+			if _obj and _obj.has_method("generate_terrain_mesh"):
+				_obj.call("generate_terrain_mesh")
 		2:
-			if obj and obj.has_method("scatter_objects"):
-				obj.call("scatter_objects")
+			if _obj and _obj.has_method("scatter_objects"):
+				_obj.call("scatter_objects")
 		3:
-			if obj and obj.has_method("generate_collider"):
-				obj.call("generate_collider")
+			if _obj and _obj.has_method("generate_collider"):
+				_obj.call("generate_collider")
 
 #HeightMap Menu
 func _on_heightmap_option_pressed(id : int):
@@ -58,30 +58,30 @@ func _edit(object : Object):
 	
 	if object is EditorTerrainNode:
 #		Ensure the other control is removed
-		remove_control(terraingen_menu_controls)
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
+		remove_control(_terraingen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, _heightgen_menu_controls)
 		
-		obj = object                         
-		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+		_obj = object                         
+		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, _terraingen_menu_controls)
 	elif object is EditorHeightGenNode:
 	#		Ensure the other control is removed
-		remove_control(heightgen_menu_controls)
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+		remove_control(_heightgen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, _terraingen_menu_controls)
 		
-		obj = object
-		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
+		_obj = object
+		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, _heightgen_menu_controls)
 	else:
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, _heightgen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, _terraingen_menu_controls)
 
 func _handles(object):
 	return object is EditorTerrainNode || object is EditorHeightGenNode
 
 func _exit_tree():
-	if terraingen_menu_controls.get_parent():
-		remove_control(terraingen_menu_controls)
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, terraingen_menu_controls)
+	if _terraingen_menu_controls.get_parent():
+		remove_control(_terraingen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, _terraingen_menu_controls)
 	
-	if heightgen_menu_controls.get_parent():
-		remove_control(heightgen_menu_controls)
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, heightgen_menu_controls)
+	if _heightgen_menu_controls.get_parent():
+		remove_control(_heightgen_menu_controls)
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, _heightgen_menu_controls)
