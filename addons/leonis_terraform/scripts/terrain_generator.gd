@@ -1,8 +1,7 @@
 @tool
+## 3D Terrain Node for generating terrain meshes
 class_name EditorTerrainNode 
 extends Node3D
-
-## 3D Terrain Node for generating terrain meshes
 
 @export_category("Terrain Configuration")
 @export var height_map_texture : Texture2D
@@ -33,6 +32,8 @@ func _ready():
 	if get_child_count() == 0:
 		generate_terrain_mesh()
 
+## Creates the final terrain cell with LODs and
+## applies a shader material on it as well as a collision mesh
 func generate_terrain_mesh():
 	if get_child_count() > 0:
 		for child in get_children():
@@ -55,9 +56,12 @@ func generate_terrain_mesh():
 func generate_collider():
 	print("TODO")
 
+## Scatters objects on the terrain cell
+## objects can range from static objects such as rocks to foliage
 func scatter_objects():
 	print("TODO")
 		
+## Adds each generated LOD and collider to the main node as children
 func _add_children_and_reposition():
 	var lod_0_root = StaticBody3D.new()
 	lod_0_root.add_child(_terrain_lod_0)
@@ -74,6 +78,8 @@ func _add_children_and_reposition():
 	_terrain_lod_3.position.z = -(cell_size / 2)
 	add_child(_terrain_lod_3)
 	
+## Creates a new shader material and sets all shader parameters
+## based on the relevant properties
 func _configure_material():
 	_terrain_material = ShaderMaterial.new()
 	_terrain_material.shader = preload("res://addons/leonis_terraform/shaders/terrain_shader.gdshader")
@@ -95,6 +101,7 @@ func _configure_material():
 	_terrain_material.set_shader_parameter("detailNormalMap", detail_layer.normalMap)
 	_terrain_material.set_shader_parameter("detailTiling", detail_layer.uvTiling)
 
+## Creates an LOD mesh that will be subdivided based on [param a].
 func _generate_lod_mesh(verts : int) -> ArrayMesh:
 	var arr_mesh : ArrayMesh = ArrayMesh.new()
 	var surf = SurfaceTool.new()
@@ -125,6 +132,7 @@ func _generate_lod_mesh(verts : int) -> ArrayMesh:
 	arr_mesh = surf.commit()
 	return arr_mesh
 	
+## Configures how mesh LOD: 0 needs to be created
 func _generate_lod_0():
 	_terrain_lod_0 = MeshInstance3D.new()
 	_terrain_lod_0.name = "TerrainCellLOD0"
@@ -136,6 +144,7 @@ func _generate_lod_0():
 		_terrain_lod_0.create_trimesh_collision()
 	_terrain_lod_0.material_override = _terrain_material
 
+## Configures how mesh LOD: 1 needs to be created
 func _generate_lod_1():
 	_terrain_lod_1 = MeshInstance3D.new()
 	_terrain_lod_1.name = "TerrainCellLOD1"
@@ -143,7 +152,8 @@ func _generate_lod_1():
 	_terrain_lod_1.visibility_range_end = cell_size * 2
 	_terrain_lod_1.mesh = _generate_lod_mesh(32)
 	_terrain_lod_1.material_override = _terrain_material
-	
+
+## Configures how mesh LOD: 2 needs to be created
 func _generate_lod_2():
 	_terrain_lod_2 = MeshInstance3D.new()
 	_terrain_lod_2.name = "TerrainCellLOD2"
@@ -152,6 +162,7 @@ func _generate_lod_2():
 	_terrain_lod_2.mesh = _generate_lod_mesh(16)
 	_terrain_lod_2.material_override = _terrain_material
 
+## Configures how mesh LOD: 3 needs to be created
 func _generate_lod_3():
 	_terrain_lod_3 = MeshInstance3D.new()
 	_terrain_lod_3.name = "TerrainCellLOD3"
