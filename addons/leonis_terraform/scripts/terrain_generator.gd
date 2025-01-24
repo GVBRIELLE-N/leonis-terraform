@@ -1,5 +1,6 @@
 @tool
-## 3D Terrain Node for generating terrain meshes
+## 3D Node for generating terrain meshes with collision.
+## Future versions will include object scattering and path generation
 class_name EditorTerrainNode 
 extends Node3D
 
