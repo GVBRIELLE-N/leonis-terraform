@@ -76,7 +76,7 @@ func _add_children_and_reposition():
 	
 func _configure_material():
 	_terrain_material = ShaderMaterial.new()
-	_terrain_material.shader = preload("res://addons/leonis_world_gen/shaders/terrain_shader.gdshader")
+	_terrain_material.shader = preload("res://addons/leonis_terraform/shaders/terrain_shader.gdshader")
 	_terrain_material.set_shader_parameter("heightMapTexture", height_map_texture)
 	_terrain_material.set_shader_parameter("heightOffset", height_offset)
 #	Top Layer
